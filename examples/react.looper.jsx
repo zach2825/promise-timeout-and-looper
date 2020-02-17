@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import looper from "../index";
+import {looper} from "promise-timeout-and-looper";
 
 /**
  * this example file is meant to show how the looper helper works.

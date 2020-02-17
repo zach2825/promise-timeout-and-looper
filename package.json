@@ -12,7 +12,12 @@
   "keywords": [
     "promise",
     "timeout",
-    "loops"
+    "loops",
+    "timed",
+    "react",
+    "helper",
+    "vue",
+    "ticks"
   ],
   "scripts": {
     "test": "jest",
