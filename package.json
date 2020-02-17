@@ -1,0 +1,26 @@
+{
+  "name": "promise-timeout-and-looper",
+  "description": "javascript sleep using promises and looper method",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zach2825/promise-timeout-and-looper.git"
+  },
+  "author": "The Zach <zach2825@gmail.com>",
+  "license": "MIT",
+  "private": false,
+  "keywords": [
+    "promise",
+    "timeout",
+    "loops"
+  ],
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:looper": "jest -u -t='looper'",
+    "test:sleeper": "jest -u -t='sleeper'"
+  },
+  "devDependencies": {
+    "jest": "^25.1.0"
+  }
+}
