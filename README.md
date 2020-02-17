@@ -1,7 +1,7 @@
 # Promise timeout and looper
-
-![StorageTreasures](images/promise-timeout-and-looper.png)   
-
+<p align="center">
+![Promise timeout and looper](images/promise-timeout-and-looper.png)   
+</p>
 An easy way to do looping ticks at a set time interval. Other ways to do this requires recursion. This package eliminates that.
 
 You'll need to initialize the sleeper to use it as stand alone. That's done because you can cancel the timeout from other parts of your application. like in reacts componentWillUnmount or vue unmounted hook
