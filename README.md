@@ -14,18 +14,87 @@ You'll need to initialize the sleeper to use it as stand alone. That's done beca
 adds an intuitive sleep method to your js projects
 
 ```js
+// Import sleeper
 const {sleeper} = require('promise-timeout-and-looper');
 
-// 5 second timeout
-(async () => {
-    await sleeper(5000)
-})
+const test = async = () => {
+    
+    // Initialize the 5 second timeout
+    const sleep_obj = sleeper(5000, {
+        //optional
+        debug: false, // default is false
+        message: 'optional message here', // this messages is massed through the tick resolve. can be used to know which tick is resolving if you have multiple sleep_objects
+    });
+    
+    // tick gets the it of setTimeout, message, the ms value, all previous ids of setTimeout, and tickCount. 
+    const tick = await sleep_obj.tick();
+    
+    //this could also look like this in es syntax 
+    // const {tickCount} = await sleep_obj.tick(); // on first run tickCount would equal 0
+}
 ```
 
-You can find an example in __tests__/sleeper.test.js
+if you define the sleep_obj globally then you can cancel the running tick from anywhere at any time. So in like in react if you set the sleep_object in state in your *componentWillUnmount* hook you could add a call like 
+this `this.state.sleep_obj && this.state.sleep_obj.cancel_timer()` that will invalidate the timer and call clearTimeout on the latest timer id in the registry.
+
+
+You can find an example [here](__tests__/sleeper.test.js)
 
 ### looper
 
-easy to use loop that adds in interval after your callback is done
+easy to use loop that adds in interval after your callback has resolved
 
-You can find an example in __tests__/sleeper.test.js
+Here is a code fragment in vue
+
+```vue
+import {looper} from 'promise-timeout-and-looper';
+
+export default {
+    data() {
+        return {
+            loop: null,
+            numbers: [],
+        };
+    },
+    methods: {
+        async start() {
+            this.numbers = [];
+            console.log("starting");
+
+            // loopStart returns a promise that resolves when loopCancel or loop_tick_callback returns false
+            await this.loop.loopStart({
+                debug: true, // optional defaults to false
+
+                // required
+                ms: 1000,
+                loop_tick_callback: async (tick) => {
+                    // tick gets the sleeper object plus if the tick is valid or not.
+                    const {tickCount} = tick;
+                    this.numbers.push(tickCount);
+
+                    if (tickCount === 5) {
+                        return false;
+                    }
+                }
+            });
+
+            console.log('done');
+        },
+        async cancel() {
+            // cancels current tick
+            this.loop && this.loop.loopCancel();
+        },
+    },
+    mounted() {
+        this.loop = looper;
+    },
+    beforeDestroy() {
+        this.cancel();
+    }
+}
+``` 
+
+You can find a few examples of looper here
+* [react](examples/react.looper.jsx)
+* [vue](examples/vue.looper.vue)
+* [test](__tests__/sleeper.test.js)

@@ -35,7 +35,6 @@
 </template>
 
 <script>
-    import Logo from '~/components/Logo.vue'
     import {looper} from 'promise-timeout-and-looper';
 
     export default {
@@ -44,9 +43,6 @@
                 loop: null,
                 numbers: [],
             };
-        },
-        components: {
-            Logo
         },
         methods: {
             async start() {
@@ -75,7 +71,7 @@
             this.loop = looper;
         },
         beforeDestroy() {
-            this.cancel();
+            this.loop && this.loop.loopCancel();
         }
     }
 </script>

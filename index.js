@@ -11,7 +11,7 @@ const sleeper = module.exports.sleeper = (ms, {message = undefined, debug = fals
     debug && console.log("sleeper.initialized");
 
     // Track history and current timeout values.
-    const registry = {valid: true, tickCount: 0, timers: []};
+    const registry = {valid: true, tickCount: 0, timers: [], current_timer: {timer: null, cancel: null}};
 
     const tickCount = () => {
         const {
@@ -38,16 +38,19 @@ const sleeper = module.exports.sleeper = (ms, {message = undefined, debug = fals
         toObject,
 
         // functions
-        cancel_timer: () => {
+        cancel_timer: async () => {
             debug && console.log(`canceling.${registry.timer}`);
             clearTimeout(registry.timer);
             registry.timer = null;
             registry.valid = false;
+            registry.current_timer && await registry.current_timer.cancel(registry);
         },
         tick: () => {
             const new_count = tickCount() + 1;
 
-            return new Promise(resolve => {
+            registry.current_timer.promise = new Promise(resolve => {
+                registry.current_timer.cancel = resolve;
+
                 registry.timer = setTimeout(() => {
                     debug && console.log(`resolving.tick.${registry.timer}`);
                     resolve({message, ...toObject()});
@@ -59,6 +62,8 @@ const sleeper = module.exports.sleeper = (ms, {message = undefined, debug = fals
 
                 registry.timers.push(registry.timer);
             });
+
+            return registry.current_timer.promise;
         },
     };
 };
@@ -74,10 +79,10 @@ function LooperConstructor() {
      * cancel the loop in a safe way
      * @param debug
      */
-    this.loopCancel = ({debug = this.debug} = {}) => {
+    this.loopCancel = async ({debug = this.debug} = {}) => {
         debug && console.log("looper.cancel");
-        this.timer && this.timer.cancel_timer();
         this.tick = {valid: false};
+        this.timer && await this.timer.cancel_timer({debug});
     };
 
     /**
@@ -106,15 +111,21 @@ function LooperConstructor() {
             // use this to avoid using recursion
             this.tick = await this.timer.tick();
 
-            debug && console.log('loopStart.tick.done', this.tick, this.tick.valid ? 'is valid' : 'is not valid');
+            if(this.tick.valid) {
 
-            // only show the loading state on the first loop iteration. pass the tick object into the callback function
-            const response = await loop_tick_callback(this.tick);
+                debug && console.log('loopStart.tick.done', this.tick, this.tick.valid ? 'is valid' : 'is not valid');
 
-            // The last callback returned false. This means that the looping should cancel.
-            if (response === false) {
+                // only show the loading state on the first loop iteration. pass the tick object into the callback function
+                const response = await loop_tick_callback(this.tick);
+
+                // The last callback returned false. This means that the looping should cancel.
+                if (response === false) {
+                    this.loopCancel({debug});
+                }
+            }else{
                 this.loopCancel({debug});
             }
+
         }
     }
 }
