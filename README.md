@@ -5,7 +5,7 @@
 
 An easy way to do looping ticks at a set time interval. Other ways to do this requires recursion. This package eliminates that.
 
-You'll need to initialize the sleeper to use it as stand alone. That's done because you can cancel the timeout from other parts of your application. like in reacts componentWillUnmount or vue unmounted hook
+You'll need to initialize the sleeper or looper to use it. That's done because you can cancel the timeout however you'd like. like in reacts componentWillUnmount or vue unmounted hook. You can see a few examples in the examples directory.
 
 ## Usage
 
@@ -38,7 +38,7 @@ if you define the sleep_obj globally then you can cancel the running tick from a
 this `this.state.sleep_obj && this.state.sleep_obj.cancel_timer()` that will invalidate the timer and call clearTimeout on the latest timer id in the registry.
 
 
-You can find an example [here](__tests__/sleeper.test.js)
+You can find anohter example [here](__tests__/sleeper.test.js)
 
 ### looper
 
