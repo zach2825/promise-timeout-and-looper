@@ -7,6 +7,18 @@ An easy way to do looping ticks at a set time interval. Other ways to do this re
 
 You'll need to initialize the sleeper or looper to use it. That's done because you can cancel the timeout however you'd like. like in reacts componentWillUnmount or vue unmounted hook. You can see a few examples in the examples directory.
 
+## Installation
+
+```
+npm install --save promise-timeout-and-looper
+```
+
+or
+
+```
+yarn add promise-timeout-and-looper
+```
+
 ## Usage
 
 ### sleeper
