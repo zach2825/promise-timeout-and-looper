@@ -1,15 +1,17 @@
 'use strict';
 
+const get = require('lodash/get');
+
 /**
  * handle sleep in javascript using promises. Also add a few options to make this more useful
  * @param ms
  * @param options
  * @returns {{valid: boolean, timer: null, tickCount: (function(): number), cancel_timer: cancel_timer, id: *, tick: (function(): *), toObject: (function(): {valid: boolean, timer: null, registry: {valid: boolean, timers: [], tickCount: number}, tickCount: number, ms: *, message, hash: *})}}
  */
-const sleeper = module.exports.sleeper = (ms, options = {}) => {
+const sleeper = module.exports.sleeper = (ms, options) => {
 
-    const message = options.message;
-    const debug = options.debug || false;
+    const message = get(options, 'message');
+    const debug = get(options, 'debug', false);
 
     debug && console.log("sleeper.initialized");
 
@@ -82,8 +84,8 @@ function LooperConstructor() {
      * cancel the loop in a safe way
      * @param options
      */
-    this.loopCancel = async (options = {}) => {
-        const debug = options.debug || false;
+    this.loopCancel = async (options) => {
+        const debug = get(options, 'debug', false);
 
         debug && console.log("looper.cancel");
         this.tick = {valid: false};
@@ -95,13 +97,13 @@ function LooperConstructor() {
      * @returns {Promise<void>}
      * @param options
      */
-    this.loopStart = async (options = {}) => {
+    this.loopStart = async (options) => {
         // callback to fire after each tick
-        const loop_tick_callback = options.loop_tick_callback;
+        const loop_tick_callback = get(options, 'loop_tick_callback');
         // timeout between loop ticks
-        const ms = options.ms || this.ms;
+        const ms = get(options, 'ms', this.ms);
         // Debug information on each tick to the console
-        const debug = options.debug || this.debug;
+        const debug = get(options, 'debug', this.debug);
 
         debug && console.log('loopStart.called', {loop_tick_callback, ms, debug});
 
@@ -113,7 +115,7 @@ function LooperConstructor() {
             // use this to avoid using recursion
             this.tick = await this.timer.tick();
 
-            if(this.tick.valid) {
+            if (this.tick.valid) {
 
                 debug && console.log('loopStart.tick.done', this.tick, this.tick.valid ? 'is valid' : 'is not valid');
 
@@ -124,7 +126,7 @@ function LooperConstructor() {
                 if (response === false) {
                     this.loopCancel({debug});
                 }
-            }else{
+            } else {
                 this.loopCancel({debug});
             }
 
