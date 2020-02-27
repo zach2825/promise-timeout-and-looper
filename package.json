@@ -1,7 +1,7 @@
 {
   "name": "promise-timeout-and-looper",
   "description": "javascript sleep using promises and looper method",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "repository": {
     "type": "git",
     "url": "https://github.com/zach2825/promise-timeout-and-looper.git"
@@ -26,12 +26,7 @@
     "test:sleeper": "jest -u -t='sleeper'"
   },
   "devDependencies": {
-    "@babel/cli": "^7.8.4",
-    "@babel/core": "^7.8.6",
-    "@babel/preset-env": "^7.8.6",
     "jest": "^25.1.0"
   },
-  "dependencies": {
-    "@babel/polyfill": "^7.8.3"
-  }
+  "dependencies": {}
 }

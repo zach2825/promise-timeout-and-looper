@@ -3,11 +3,14 @@
 /**
  * handle sleep in javascript using promises. Also add a few options to make this more useful
  * @param ms
- * @param message
- * @param debug
+ * @param options
  * @returns {{valid: boolean, timer: null, tickCount: (function(): number), cancel_timer: cancel_timer, id: *, tick: (function(): *), toObject: (function(): {valid: boolean, timer: null, registry: {valid: boolean, timers: [], tickCount: number}, tickCount: number, ms: *, message, hash: *})}}
  */
-const sleeper = module.exports.sleeper = (ms, {message = undefined, debug = false} = {}) => {
+const sleeper = module.exports.sleeper = (ms, options = {}) => {
+
+    const message = options.message;
+    const debug = options.debug || false;
+
     debug && console.log("sleeper.initialized");
 
     // Track history and current timeout values.
@@ -77,9 +80,11 @@ function LooperConstructor() {
 
     /**
      * cancel the loop in a safe way
-     * @param debug
+     * @param options
      */
-    this.loopCancel = async ({debug = this.debug} = {}) => {
+    this.loopCancel = async (options = {}) => {
+        const debug = options.debug || false;
+
         debug && console.log("looper.cancel");
         this.tick = {valid: false};
         this.timer && await this.timer.cancel_timer({debug});
@@ -87,23 +92,20 @@ function LooperConstructor() {
 
     /**
      *
-     * @param loop_tick_callback
-     * @param ms - milliseconds
-     * @param debug
      * @returns {Promise<void>}
+     * @param options
      */
-    this.loopStart = async (
-        {
-            // callback to fire after each tick
-            loop_tick_callback,
-            // timeout between loop ticks
-            ms = this.ms,
-            // Debug information on each tick to the console
-            debug = this.debug
-        }) => {
+    this.loopStart = async (options = {}) => {
+        // callback to fire after each tick
+        const loop_tick_callback = options.loop_tick_callback;
+        // timeout between loop ticks
+        const ms = options.ms || this.ms;
+        // Debug information on each tick to the console
+        const debug = options.debug || this.debug;
+
         debug && console.log('loopStart.called', {loop_tick_callback, ms, debug});
 
-        this.timer = sleeper(ms, {identifier: 'looper@loop-start', debug});
+        this.timer = sleeper(ms, {identifier: 'looper@loop-start', debug: debug});
         this.tick = {valid: true};
 
         while (this.tick.valid) {
