@@ -19,9 +19,7 @@ const sleeper = module.exports.sleeper = (ms, options) => {
     const registry = {valid: true, tickCount: 0, timers: [], current_timer: {timer: null, cancel: null}};
 
     const tickCount = () => {
-        const {
-            tickCount = 0,
-        } = registry;
+        const tickCount = get(registry, 'tickCount', 0);
 
         return tickCount;
     };
